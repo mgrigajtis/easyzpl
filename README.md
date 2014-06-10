@@ -18,15 +18,15 @@ Or install it yourself as:
 
 ## Usage
 
-require 'rubygems'
-require 'easyzpl'
+    require 'rubygems'
+    require 'easyzpl'
 
-label = Easyzpl::Label.new
-label.home_position(30, 30)
-label.draw_border(0, 0, 400, 300)
-label.text_field('ZEBRA', 10, 10)
-label.bar_code_39('ZEBRA', 10, 30)
-puts label.to_s
+    label = Easyzpl::Label.new
+    label.home_position(30, 30)
+    label.draw_border(0, 0, 400, 300)
+    label.text_field('ZEBRA', 10, 10)
+    label.bar_code_39('ZEBRA', 10, 30)
+    puts label.to_s
 
 ## Contributing
 
