@@ -1,4 +1,5 @@
 # Easyzpl
+[![Build Status](https://travis-ci.org/mgrigajtis/easyzpl.svg?branch=master)](https://travis-ci.org/mgrigajtis/easyzpl)
 
 Makes it easy to write ZPL & ZPL2.
 
