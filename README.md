@@ -1,6 +1,6 @@
 # Easyzpl
 
-TODO: Write a gem description
+Makes it easy to write ZPL & ZPL2.
 
 ## Installation
 
