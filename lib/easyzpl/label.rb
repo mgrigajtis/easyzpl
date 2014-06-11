@@ -47,7 +47,7 @@ module Easyzpl
       y = 0 unless numeric?(y)
       options = { height: 10.to_s, width: 10.to_s }.merge(params)
       label_data.push('^FO' + x.to_s + ',' + y.to_s + '^AFN,' +
-                      options[:height] + ',' + options[:width] +
+                      options[:height].to_s + ',' + options[:width].to_s +
                       '^FD' + text + '^FS')
     end
 
