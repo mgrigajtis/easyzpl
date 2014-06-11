@@ -65,7 +65,7 @@ module Easyzpl
       label_data.map! { |l| "#{l}" }.join('') + '^PQ' + quantity.to_s + '^XZ'
     end
 
-    private
+    protected
 
     # Returns true if a variable is number, false if not
     def numeric?(variable)
