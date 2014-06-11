@@ -31,7 +31,7 @@ module Easyzpl
       y = 0 unless numeric?(y)
 
       # update the variable field count
-      variable_fields_count += 1
+      self.variable_fields_count += 1
 
       label_data.push('^FO' + x.to_s + ',' + y.to_s + '^FN' +
                       variable_fields_count.to_s + '^FS')
@@ -43,7 +43,7 @@ module Easyzpl
       y = 0 unless numeric?(y)
 
       # update the variable field count
-      variable_fields_count += 1
+      self.variable_fields_count += 1
 
       label_data.push('^FO' + x.to_s + ',' + y.to_s + '^B3N,Y,20,N,N^FN' +
                       variable_fields_count.to_s + '^FS')
