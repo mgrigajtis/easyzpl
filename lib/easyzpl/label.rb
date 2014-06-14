@@ -1,4 +1,7 @@
 require 'prawn'
+require 'barby'
+require 'barby/barcode/code_39'
+require 'barby/outputter/prawn_outputter'
 
 # This module is a wrapper for writing confusing ZPL and ZPL2 code
 module Easyzpl
@@ -26,6 +29,7 @@ module Easyzpl
       # Start creating a Prawn document in memory,
       # this can later be saved as a PDF and also
       # an image
+      return unless label_height && label_width
       self.pdf = Prawn::Document.new
 
       # The start of the zpl label
@@ -49,11 +53,15 @@ module Easyzpl
 
     # Draws a square border on dot in width
     def draw_border(x, y, length, width)
+      return unless numeric?(length) && numeric?(width)
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
-      return unless numeric?(length) && numeric?(width)
+
       label_data.push('^FO' + x.to_s + ',' + y.to_s + '^GB' + length.to_s +
                       ',' + width.to_s + ',1^FS')
+
+      # PDF creation if the label height & width has been set
+      return unless label_height && label_width
       pdf.stroke_axis
       pdf.stroke do
         pdf.rectangle [x, y], length, width * -1
@@ -69,7 +77,9 @@ module Easyzpl
                       options[:height].to_s + ',' + options[:width].to_s +
                       '^FD' + text + '^FS')
 
-      pdf.text_box text, at: [x, y + Integer(label_height) - Integer(options[:height]) - 1]
+      return unless label_height && label_width
+      pdf.text_box text, at: [x, Integer(label_height) - y -
+                    Integer(options[:height]) - 1]
     end
 
     # Prints a bar code in barcode39 font
@@ -87,6 +97,7 @@ module Easyzpl
     end
 
     def to_pdf(filename)
+      return unless label_height && label_width
       pdf.render_file(filename)
     end
 
