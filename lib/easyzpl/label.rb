@@ -88,6 +88,13 @@ module Easyzpl
       y = 0 unless numeric?(y)
       label_data.push('^FO' + x.to_s + ',' + y.to_s + '^B3N,Y,20,N,N^FD' +
                       bar_code_string + '^FS')
+
+      return unless label_height && label_width
+      pdf.bounding_box [x, Integer(label_height) - y -
+                      50 - 1], width: 100 do
+        barcode = Barby::Code39.new(bar_code_string)
+        barcode.annotate_pdf(pdf)
+      end
     end
 
     # Renders the ZPL code as a string
