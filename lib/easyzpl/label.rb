@@ -52,19 +52,19 @@ module Easyzpl
     end
 
     # Draws a square border on dot in width
-    def draw_border(x, y, length, width)
-      return unless numeric?(length) && numeric?(width)
+    def draw_border(x, y, height, width)
+      return unless numeric?(height) && numeric?(width)
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
 
-      label_data.push('^FO' + x.to_s + ',' + y.to_s + '^GB' + length.to_s +
+      label_data.push('^FO' + x.to_s + ',' + y.to_s + '^GB' + height.to_s +
                       ',' + width.to_s + ',1^FS')
 
       # PDF creation if the label height & width has been set
       return unless label_height && label_width
       pdf.stroke_axis
       pdf.stroke do
-        pdf.rectangle [x, y], length, width * -1
+        pdf.rectangle [x, label_width - y - width], height, width * -1
       end
     end
 
@@ -78,8 +78,7 @@ module Easyzpl
                       '^FD' + text + '^FS')
 
       return unless label_height && label_width
-      pdf.text_box text, at: [x, Integer(label_height) - y -
-                    Integer(options[:height]) - 1]
+      pdf.text_box text, at: [x, label_width - y]
     end
 
     # Prints a bar code in barcode39 font
@@ -90,8 +89,7 @@ module Easyzpl
                       bar_code_string + '^FS')
 
       return unless label_height && label_width
-      pdf.bounding_box [x, Integer(label_height) - y -
-                      50 - 1], width: 100 do
+      pdf.bounding_box [x, Integer(label_width) - y - 40], width: 50 do
         barcode = Barby::Code39.new(bar_code_string)
         barcode.annotate_pdf(pdf)
       end
