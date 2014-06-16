@@ -72,26 +72,28 @@ module Easyzpl
     def text_field(text, x, y, params = {})
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
-      options = { height: 10.to_s, width: 10.to_s }.merge(params)
+      options = { height: 10, width: 10 }.merge(params)
       label_data.push('^FO' + x.to_s + ',' + y.to_s + '^AFN,' +
                       options[:height].to_s + ',' + options[:width].to_s +
                       '^FD' + text + '^FS')
 
       return unless label_height && label_width
-      pdf.text_box text, at: [x, label_width - y]
+      pdf.text_box text, at: [x, label_width - y - 1], size: options[:height]
     end
 
     # Prints a bar code in barcode39 font
-    def bar_code_39(bar_code_string, x, y)
+    def bar_code_39(bar_code_string, x, y, params = {})
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
       label_data.push('^FO' + x.to_s + ',' + y.to_s + '^B3N,Y,20,N,N^FD' +
                       bar_code_string + '^FS')
 
       return unless label_height && label_width
-      pdf.bounding_box [x, Integer(label_width) - y - 40], width: 50 do
+      options = { height: 20 }.merge(params)
+      pdf.bounding_box [x, Integer(label_width) - y - options[:height]],
+                       width: options[:height] do
         barcode = Barby::Code39.new(bar_code_string)
-        barcode.annotate_pdf(pdf)
+        barcode.annotate_pdf(pdf, height: options[:height])
       end
     end
 
