@@ -24,4 +24,8 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'prawn', '>= 1.0.0'
   spec.add_runtime_dependency 'barby', '>= 0.6.1'
+
+  spec.required_ruby_version = '>= 1.9.3'
+  spec.requirements << 'Prawn, v1.0.0'
+  spec.requirements << 'Barby, v0.6.1'
 end
