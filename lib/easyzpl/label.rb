@@ -17,23 +17,14 @@ module Easyzpl
     def initialize(params = {})
       # Create the array that will hold the data
       self.label_data = []
-
-      # If we got parameters, store them
-      # Remember, we only need them for Prawn
-      self.label_width = params[:width] || 0
-      self.label_height = params[:height] || 0
-
       # Set the default quantity to one
       self.quantity = 1
 
-      # Start creating a Prawn document in memory,
-      # this can later be saved as a PDF and also
-      # an image
-      return unless label_height && label_width
-      self.pdf = Prawn::Document.new
-
       # The start of the zpl label
       label_data.push('^XA')
+
+      # Initialize Prawn
+      init_prawn(params)
     end
 
     # Set the number of labels to print
@@ -60,12 +51,7 @@ module Easyzpl
       label_data.push('^FO' + x.to_s + ',' + y.to_s + '^GB' + height.to_s +
                       ',' + width.to_s + ',1^FS')
 
-      # PDF creation if the label height & width has been set
-      return unless label_height && label_width
-      pdf.stroke_axis
-      pdf.stroke do
-        pdf.rectangle [x, label_width - y - width], height, width * -1
-      end
+      draw_rectangle(x, y, height, width)
     end
 
     # Prints text
@@ -77,8 +63,10 @@ module Easyzpl
                       options[:height].to_s + ',' + options[:width].to_s +
                       '^FD' + text + '^FS')
 
-      return unless label_height && label_width
-      pdf.text_box text, at: [x, label_width - y - 1], size: options[:height]
+      pdf.text_box text,
+                   at: [x, label_width - y -
+                        Integer(options[:height] / 10)],
+                   size: options[:height] if label_height && label_width
     end
 
     # Prints a bar code in barcode39 font
@@ -90,11 +78,7 @@ module Easyzpl
 
       return unless label_height && label_width
       options = { height: 20 }.merge(params)
-      pdf.bounding_box [x, Integer(label_width) - y - options[:height]],
-                       width: options[:height] do
-        barcode = Barby::Code39.new(bar_code_string)
-        barcode.annotate_pdf(pdf, height: options[:height])
-      end
+      draw_bar_code_39(bar_code_string, x, y, options[:height])
     end
 
     # Renders the ZPL code as a string
@@ -110,9 +94,36 @@ module Easyzpl
 
     protected
 
+    def init_prawn(params)
+      self.label_width = params[:width] || 0
+      self.label_height = params[:height] || 0
+
+      return unless label_height > 0 && label_width > 0
+      self.pdf = Prawn::Document.new
+    end
+
     # Returns true if a variable is number, false if not
     def numeric?(variable)
       true if Integer(variable) rescue false
+    end
+
+    # Draws the PDF rectangle (border)
+    def draw_rectangle(x, y, height, width)
+      return unless label_height > 0 && label_width > 0
+      pdf.stroke_axis
+      pdf.stroke do
+        pdf.rectangle [x, label_width - y - width], height, width * -1
+      end
+    end
+
+    # Draws the PDF bar code 39
+    def draw_bar_code_39(bar_code_string, x, y, height)
+      return unless label_height > 0 && label_width > 0
+      pdf.bounding_box [x, Integer(label_width) - y - height],
+                       width: height do
+        barcode = Barby::Code39.new(bar_code_string)
+        barcode.annotate_pdf(pdf, height: height)
+      end
     end
   end
 end

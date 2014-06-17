@@ -33,7 +33,8 @@ module Easyzpl
       self.variable_fields_count += 1
 
       # Add the field
-      label_data.push('^FN' + variable_fields_count.to_s + '^FD' + value + '^FS')
+      label_data.push('^FN' + variable_fields_count.to_s +
+                      '^FD' + value + '^FS')
     end
   end
 end
