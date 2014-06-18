@@ -63,6 +63,7 @@ module Easyzpl
                       options[:height].to_s + ',' + options[:width].to_s +
                       '^FD' + text + '^FS')
 
+      return unless label_height > 0 && label_width > 0
       pdf.text_box text,
                    at: [x, label_width - y -
                         Integer(options[:height] / 10)],

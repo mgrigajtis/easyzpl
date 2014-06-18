@@ -44,6 +44,7 @@ module Easyzpl
                       options[:height].to_s + ',' + options[:width].to_s +
                        '^FN' + variable_fields_count.to_s + '^FS')
 
+      return unless label_height > 0 && label_width > 0
       pdf.text_box '{Variable Field ' + variable_fields_count.to_s + '}',
                    at: [x, label_width - y - Integer(options[:height] / 10)],
                    size: options[:height] if label_height && label_width
