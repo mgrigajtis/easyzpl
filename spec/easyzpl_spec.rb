@@ -26,7 +26,7 @@ describe 'Testing easyzpl Gem' do
       label.draw_border(0, 0, 400, 300)
       label.variable_text_field(10, 10)
       label.variable_bar_code_39(10, 30)
-      expect(label.to_s).to eq('^XA^DFTemplate1^FS^LH30,30^FO0,0^GB400,300,1^FS^FO10,10^FN1^FS^FO10,30^B3N,Y,20,N,N^FN2^FS^PQ1^XZ')
+      expect(label.to_s).to eq('^XA^DFTemplate1^FS^LH30,30^FO0,0^GB400,300,1^FS^FO10,10^AFN,10,10^FN1^FS^FO10,30^B3N,Y,20,N,N^FN2^FS^PQ1^XZ')
     end
   end
 
