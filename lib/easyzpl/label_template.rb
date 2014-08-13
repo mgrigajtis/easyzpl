@@ -16,6 +16,13 @@ module Easyzpl
       return if name.nil?
       return if name.strip.empty?
 
+      # Set the DPIs
+      self.pdf_dpi = 72
+      self.printer_dpi = params[:dots]
+
+      # Set the field orientation
+      self.field_orientation = params[:field_orientation]
+
       # Set the number of variable fields
       self.variable_fields_count = 0
 
@@ -26,7 +33,9 @@ module Easyzpl
       self.quantity = 1
 
       # The start of the label
-      label_data.push('^XA^DF' + name + '^FS')
+      label_data.push('^XA')
+      label_data.push('^FWB') if field_orientation == :landscape
+      label_data.push('^DF' + name + '^FS')
 
       init_prawn(params)
     end
@@ -35,36 +44,52 @@ module Easyzpl
     def variable_text_field(x, y, params = {})
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
-      options = { height: 10, width: 10 }.merge(params)
+      options = { height: 0.1, width: 0.1 }.merge(params)
 
       # update the variable field count
       self.variable_fields_count += 1
 
-      label_data.push('^FO' + x.to_s + ',' + y.to_s + '^AFN,' +
-                      options[:height].to_s + ',' + options[:width].to_s +
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s + '^AF,' +
+                      Integer(options[:height] * printer_dpi).to_s + ',' +
+                      Integer(options[:width] * printer_dpi).to_s +
                        '^FN' + variable_fields_count.to_s + '^FS')
 
-      return unless label_height > 0 && label_width > 0
-      pdf.text_box '{Variable Field ' + variable_fields_count.to_s + '}',
-                   at: [x, label_width - y - Integer(options[:height] / 10)],
-                   size: options[:height] if label_height && label_width
+      # return unless label_height > 0 && label_width > 0
+      # pdf.text_box '{Variable Field ' + variable_fields_count.to_s + '}',
+      #              at: [Integer(x * pdf_dpi), Integer(label_width * pdf_dpi) -
+      #              Integer(y * pdf_dpi) -
+      #              Integer(options[:height] / 10) * pdf_dpi],
+      #              size: Integer(options[:height] * pdf_dpi) if label_height &&
+      #              label_width
     end
 
     # Sets a variable bar code that can be recalled
     def variable_bar_code_39(x, y, params = {})
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
+      options = { height: 0.1, width: 0.1 }.merge(params)
 
       # update the variable field count
       self.variable_fields_count += 1
 
-      label_data.push('^FO' + x.to_s + ',' + y.to_s + '^B3N,Y,20,N,N^FN' +
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s)
+
+      if params[:orientation] == :landscape
+        label_data.push('^B3B,')
+      else
+        label_data.push('^B3N,')
+      end
+
+      label_data.push('Y,' + Integer(options[:height] * printer_dpi).to_s + ',N,N^FN' +
                       variable_fields_count.to_s + '^FS')
 
-      return unless label_height && label_width
-      options = { height: 20 }.merge(params)
-      draw_bar_code_39('VARIABLEFIELD' + variable_fields_count.to_s,
-                       x, y, options[:height])
+      # return unless label_height && label_width
+      # options = { height: 20 }.merge(params)
+      # draw_bar_code_39('VARIABLEFIELD' + variable_fields_count.to_s,
+      #                  Integer(x * pdf_dpi), Integer(y * pdf_dpi),
+      #                  Integer(options[:height] * pdf_dpi))
     end
   end
 end

@@ -12,16 +12,29 @@ module Easyzpl
     attr_accessor :pdf
     attr_accessor :label_width
     attr_accessor :label_height
+    attr_accessor :printer_dpi
+    attr_accessor :pdf_dpi
+    attr_accessor :field_orientation
 
     # Called when the new method is invoked
     def initialize(params = {})
       # Create the array that will hold the data
       self.label_data = []
+
       # Set the default quantity to one
       self.quantity = 1
 
-      # The start of the zpl label
+      # Set the DPIs
+      self.pdf_dpi = 72
+      self.printer_dpi = params[:dots]
+
+      # Set the field orientation
+      self.field_orientation = params[:field_orientation]
+
+      # The start of the label
       label_data.push('^XA')
+      label_data.push('^FWB') if field_orientation == :landscape
+      label_data.push('^DF' + name + '^FS')
 
       # Initialize Prawn
       init_prawn(params)
@@ -48,38 +61,45 @@ module Easyzpl
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
 
-      label_data.push('^FO' + x.to_s + ',' + y.to_s + '^GB' + height.to_s +
-                      ',' + width.to_s + ',1^FS')
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s + '^GB' +
+                      Integer(height * printer_dpi).to_s +
+                      ',' + Integer(width * printer_dpi).to_s + ',1^FS')
 
-      draw_rectangle(x, y, height, width)
+      draw_rectangle(x * pdf_dpi, y * pdf_dpi, height * pdf_dpi, width * pdf_dpi)
     end
 
     # Prints text
     def text_field(text, x, y, params = {})
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
-      options = { height: 10, width: 10 }.merge(params)
-      label_data.push('^FO' + x.to_s + ',' + y.to_s + '^AFN,' +
-                      options[:height].to_s + ',' + options[:width].to_s +
-                      '^FD' + text + '^FS')
+      options = { height: (10),
+                  width: (10) }.merge(params)
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' + Integer(y *
+                      printer_dpi).to_s + '^AF,' +
+                      Integer(options[:height] * printer_dpi).to_s + ',' +
+                      Integer(options[:width] * printer_dpi).to_s + '^FD' +
+                      text + '^FS')
 
       return unless label_height > 0 && label_width > 0
-      pdf.text_box text,
-                   at: [x, label_width - y -
-                        Integer(options[:height] / 10)],
-                   size: options[:height] if label_height && label_width
+      pdf.text_box text, at: [x, label_width - y -
+                         Integer((options[:height] * pdf_dpi) / 10)],
+                         size: (options[:height] *
+                         pdf_dpi) if label_height && label_width
     end
 
     # Prints a bar code in barcode39 font
     def bar_code_39(bar_code_string, x, y, params = {})
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
-      label_data.push('^FO' + x.to_s + ',' + y.to_s + '^B3N,Y,20,N,N^FD' +
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s + '^B3N,Y,20,N,N^FD' +
                       bar_code_string + '^FS')
 
       return unless label_height && label_width
       options = { height: 20 }.merge(params)
-      draw_bar_code_39(bar_code_string, x, y, options[:height])
+      draw_bar_code_39(bar_code_string, Integer(x * pdf_dpi),
+                       Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
     end
 
     # Renders the ZPL code as a string
@@ -96,8 +116,8 @@ module Easyzpl
     protected
 
     def init_prawn(params)
-      self.label_width = params[:width] || 0
-      self.label_height = params[:height] || 0
+      self.label_width = (params[:width] * pdf_dpi) || 0
+      self.label_height = (params[:height] * pdf_dpi) || 0
 
       return unless label_height > 0 && label_width > 0
       self.pdf = Prawn::Document.new
@@ -113,17 +133,19 @@ module Easyzpl
       return unless label_height > 0 && label_width > 0
       pdf.stroke_axis
       pdf.stroke do
-        pdf.rectangle [x, label_width - y - width], height, width * -1
+        pdf.rectangle [x * pdf_dpi, label_width - (y * pdf_dpi) -
+                      (width * pdf_dpi)], height,
+                      (width * pdf_dpi) * -1
       end
     end
 
     # Draws the PDF bar code 39
     def draw_bar_code_39(bar_code_string, x, y, height)
       return unless label_height > 0 && label_width > 0
-      pdf.bounding_box [x, Integer(label_width) - y - height],
-                       width: height do
+      pdf.bounding_box [x, Integer(label_width) - y - (height * pdf_dpi)],
+                       width: (height * pdf_dpi) do
         barcode = Barby::Code39.new(bar_code_string)
-        barcode.annotate_pdf(pdf, height: height)
+        barcode.annotate_pdf(pdf, height: (height * pdf_dpi))
       end
     end
   end
