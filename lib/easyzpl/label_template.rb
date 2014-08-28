@@ -82,14 +82,42 @@ module Easyzpl
         label_data.push('^B3N,')
       end
 
-      label_data.push('Y,' + Integer(options[:height] * printer_dpi).to_s + ',N,N^FN' +
-                      variable_fields_count.to_s + '^FS')
+      label_data.push('Y,' + Integer(options[:height] * printer_dpi).to_s +
+                      ',N,N^FN' + variable_fields_count.to_s + '^FS')
 
       # return unless label_height && label_width
       # options = { height: 20 }.merge(params)
       # draw_bar_code_39('VARIABLEFIELD' + variable_fields_count.to_s,
       #                  Integer(x * pdf_dpi), Integer(y * pdf_dpi),
       #                  Integer(options[:height] * pdf_dpi))
+    end
+
+    # This creates a PDF417 bar code, which is very common in the automotive
+    # industry.  The format is as follows:
+    # ^B7o,h,s,c,r,t
+    # o = Orientation
+    #   N - normal, R rotated 90 degrees clockwise, I inverted 180 degrees
+    #   B - Read from bottom up 270 degrees
+    # h = height for individual rows in dots
+    def variable_bar_code_pdf417(x, y, params = {})
+      x = 0 unless numeric?(x)
+      y = 0 unless numeric?(y)
+      options = { height: 0.1, width: 0.1 }.merge(params)
+
+      # update the variable field count
+      self.variable_fields_count += 1
+
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s)
+
+      if params[:orientation] == :landscape
+        label_data.push('^B7B,')
+      else
+        label_data.push('^B7N,')
+      end
+
+      label_data.push((printer_dpi / 5).to_s + ',0,' + 5.to_s + ',' + 8.to_s +
+                      ',N^FN' + variable_fields_count.to_s + '^FS')
     end
   end
 end

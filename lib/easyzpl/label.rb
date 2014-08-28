@@ -102,6 +102,20 @@ module Easyzpl
                        Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
     end
 
+    # Prints a bar code in pdf417 font
+    def bar_code_pdf417(bar_code_string, x, y, params = {})
+      x = 0 unless numeric?(x)
+      y = 0 unless numeric?(y)
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s + '^B7N,Y,20,N,N^FD' +
+                      bar_code_string + '^FS')
+
+      return unless label_height && label_width
+      options = { height: 20 }.merge(params)
+      draw_bar_code_39(bar_code_string, Integer(x * pdf_dpi),
+                       Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
+    end
+
     # Renders the ZPL code as a string
     def to_s
       return '' unless label_data.length > 0
