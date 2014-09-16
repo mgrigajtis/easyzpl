@@ -44,7 +44,7 @@ module Easyzpl
     def variable_text_field(x, y, params = {})
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
-      options = { height: 0.1, width: 0.1 }.merge(params)
+      options = { height: 0.1, width: 0.1 }.merge!(params)
 
       # update the variable field count
       self.variable_fields_count += 1
@@ -68,7 +68,7 @@ module Easyzpl
     def variable_bar_code_39(x, y, params = {})
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
-      options = { height: 0.1, width: 0.1 }.merge(params)
+      options = { height: 0.1, width: 0.1 }.merge!(params)
 
       # update the variable field count
       self.variable_fields_count += 1
@@ -102,7 +102,7 @@ module Easyzpl
     def variable_bar_code_pdf417(x, y, params = {})
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
-      options = { height: 0.1, width: 0.1 }.merge(params)
+      options = { height: 0.1, width: 0.1 }.merge!(params)
 
       # update the variable field count
       self.variable_fields_count += 1

@@ -66,7 +66,7 @@ module Easyzpl
                       Integer(height * printer_dpi).to_s +
                       ',' + Integer(width * printer_dpi).to_s + ',1^FS')
 
-      draw_rectangle(x * pdf_dpi, y * pdf_dpi, height * pdf_dpi, width * pdf_dpi)
+      # draw_rectangle(x * pdf_dpi, y * pdf_dpi, height * pdf_dpi, width * pdf_dpi)
     end
 
     # Prints text
@@ -74,18 +74,18 @@ module Easyzpl
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
       options = { height: (10),
-                  width: (10) }.merge(params)
+                  width: (10) }.merge!(params)
       label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' + Integer(y *
                       printer_dpi).to_s + '^AF,' +
                       Integer(options[:height] * printer_dpi).to_s + ',' +
                       Integer(options[:width] * printer_dpi).to_s + '^FD' +
                       text + '^FS')
 
-      return unless label_height > 0 && label_width > 0
-      pdf.text_box text, at: [x, label_width - y -
-                         Integer((options[:height] * pdf_dpi) / 10)],
-                         size: (options[:height] *
-                         pdf_dpi) if label_height && label_width
+      # return unless label_height > 0 && label_width > 0
+      # pdf.text_box text, at: [x, label_width - y -
+      #                    Integer((options[:height] * pdf_dpi) / 10)],
+      #                    size: (options[:height] *
+      #                    pdf_dpi) if label_height && label_width
     end
 
     # Prints a bar code in barcode39 font
@@ -96,10 +96,10 @@ module Easyzpl
                       Integer(y * printer_dpi).to_s + '^B3N,Y,20,N,N^FD' +
                       bar_code_string + '^FS')
 
-      return unless label_height && label_width
-      options = { height: 20 }.merge(params)
-      draw_bar_code_39(bar_code_string, Integer(x * pdf_dpi),
-                       Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
+      # return unless label_height && label_width
+      # options = { height: 20 }.merge!(params) { |key, v1, v2| v1 }
+      # draw_bar_code_39(bar_code_string, Integer(x * pdf_dpi),
+      #                  Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
     end
 
     # Prints a bar code in pdf417 font
@@ -110,10 +110,10 @@ module Easyzpl
                       Integer(y * printer_dpi).to_s + '^B7N,Y,20,N,N^FD' +
                       bar_code_string + '^FS')
 
-      return unless label_height && label_width
-      options = { height: 20 }.merge(params)
-      draw_bar_code_39(bar_code_string, Integer(x * pdf_dpi),
-                       Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
+      # return unless label_height && label_width
+      # options = { height: 20 }.merge!(params)
+      # draw_bar_code_39(bar_code_string, Integer(x * pdf_dpi),
+      #                  Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
     end
 
     # Renders the ZPL code as a string
