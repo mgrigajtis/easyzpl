@@ -73,11 +73,18 @@ module Easyzpl
     def text_field(text, x, y, params = {})
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
-      options = { height: (10),
-                  width: (10) }.merge!(params)
+      options = { height: 0.1,
+                  width: 0.1 }.merge!(params)
       label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' + Integer(y *
-                      printer_dpi).to_s + '^AF,' +
-                      Integer(options[:height] * printer_dpi).to_s + ',' +
+                      printer_dpi).to_s)
+
+      if params[:orientation] == :landscape
+        label_data.push('^AFB,')
+      else
+        label_data.push('^AFN,')
+      end
+
+      label_data.push(Integer(options[:height] * printer_dpi).to_s + ',' +
                       Integer(options[:width] * printer_dpi).to_s + '^FD' +
                       text + '^FS')
 

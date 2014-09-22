@@ -50,8 +50,15 @@ module Easyzpl
       self.variable_fields_count += 1
 
       label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
-                      Integer(y * printer_dpi).to_s + '^AF,' +
-                      Integer(options[:height] * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s)
+
+      if params[:orientation] == :landscape
+        label_data.push('^AFB,')
+      else
+        label_data.push('^AFN,')
+      end
+
+      label_data.push(Integer(options[:height] * printer_dpi).to_s + ',' +
                       Integer(options[:width] * printer_dpi).to_s +
                        '^FN' + variable_fields_count.to_s + '^FS')
 
