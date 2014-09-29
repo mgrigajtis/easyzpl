@@ -32,8 +32,12 @@ module Easyzpl
       # Set the default quantity to one
       self.quantity = 1
 
+      # See if invert is set to true
+      self.invert = params[:invert]
+
       # The start of the label
       label_data.push('^XA')
+      label_data.push('^POI') if invert
       label_data.push('^FWB') if field_orientation == :landscape
       label_data.push('^DF' + name + '^FS')
 
@@ -82,6 +86,7 @@ module Easyzpl
 
       label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
                       Integer(y * printer_dpi).to_s)
+      label_data.push('^BY2,2,100')
 
       if params[:orientation] == :landscape
         label_data.push('^B3B,')

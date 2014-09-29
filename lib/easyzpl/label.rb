@@ -7,6 +7,7 @@ require 'barby/outputter/prawn_outputter'
 module Easyzpl
   # This is the label object
   class Label
+    attr_accessor :invert
     attr_accessor :label_data
     attr_accessor :quantity
     attr_accessor :pdf
@@ -31,8 +32,12 @@ module Easyzpl
       # Set the field orientation
       self.field_orientation = params[:field_orientation]
 
+      # See if invert is set to true
+      self.invert = params[:invert].present? ? params[:invert] : false
+
       # The start of the label
       label_data.push('^XA')
+      label_data.push('^POI') if invert
       label_data.push('^FWB') if field_orientation == :landscape
       label_data.push('^DF' + name + '^FS')
 
