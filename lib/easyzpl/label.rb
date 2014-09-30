@@ -38,6 +38,9 @@ module Easyzpl
       # The start of the label
       label_data.push('^XA')
       label_data.push('^POI') if invert
+      label_data.push('^LT' + Integer(params[:offset] * printer_dpi).to_s) unless params[:offset].nil?
+      label_data.push('^LL' + Integer(params[:height] * printer_dpi).to_s) unless params[:height].nil?
+      label_data.push('^PW' + Integer(params[:width] * printer_dpi).to_s) unless params[:width].nil?
       label_data.push('^FWB') if field_orientation == :landscape
       label_data.push('^DF' + name + '^FS')
 
