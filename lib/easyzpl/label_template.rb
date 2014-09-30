@@ -44,7 +44,7 @@ module Easyzpl
       label_data.push('^FWB') if field_orientation == :landscape
       label_data.push('^DF' + name + '^FS')
 
-      init_prawn(params)
+      # init_prawn(params)
     end
 
     # Sets a variable field that can be recalled

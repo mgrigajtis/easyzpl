@@ -14,13 +14,6 @@ module Easyzpl
       # Set the number of variable fields
       self.variable_fields_count = 0
 
-      # Set the DPIs
-      self.pdf_dpi = 72
-      self.printer_dpi = params[:dots]
-
-      # Set the field orientation
-      self.field_orientation = params[:field_orientation]
-
       # Create the array that will hold the data
       self.label_data = []
 

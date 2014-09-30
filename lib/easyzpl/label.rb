@@ -33,7 +33,7 @@ module Easyzpl
       self.field_orientation = params[:field_orientation]
 
       # See if invert is set to true
-      self.invert = params[:invert].present? ? params[:invert] : false
+      self.invert = params[:invert]
 
       # The start of the label
       label_data.push('^XA')
@@ -42,10 +42,9 @@ module Easyzpl
       label_data.push('^LL' + Integer(params[:height] * printer_dpi).to_s) unless params[:height].nil?
       label_data.push('^PW' + Integer(params[:width] * printer_dpi).to_s) unless params[:width].nil?
       label_data.push('^FWB') if field_orientation == :landscape
-      label_data.push('^DF' + name + '^FS')
 
       # Initialize Prawn
-      init_prawn(params)
+      # init_prawn(params)
     end
 
     # Set the number of labels to print
