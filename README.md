@@ -89,21 +89,21 @@ header_text_height = 1.0
 header_text_width = 0.5
 
 # Supplier Name
-supplier_name = 'Systems Electro Coating'
+supplier_name = 'Some Company'
 supplier_name_x = header_width + 0.1
 supplier_name_y = 0.2
 supplier_name_height = 0.1
 supplier_name_width = 0.1
 
 # Supplier Address
-supplier_address = '253 Old Jackson Road'
+supplier_address = '253 Street Name'
 supplier_address_x = header_width + supplier_name_height + 0.15
 supplier_address_y = 0.2
 supplier_address_height = 0.1
 supplier_address_width = 0.1
 
 # Supplier city\state
-supplier_city_state = 'Madison, MS 39110'
+supplier_city_state = 'City, FL 32953'
 supplier_city_state_x = header_width + supplier_name_height + supplier_address_height + 0.2
 supplier_city_state_y = 0.2
 supplier_city_state_height = 0.1
