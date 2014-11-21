@@ -60,9 +60,9 @@ module Easyzpl
                       Integer(y * printer_dpi).to_s)
 
       if params[:orientation] == :landscape
-        label_data.push('^AFB,')
+        label_data.push('^A0N,')
       else
-        label_data.push('^AFN,')
+        label_data.push('^A0B,')
       end
 
       label_data.push(Integer(options[:height] * printer_dpi).to_s + ',' +
@@ -133,6 +133,64 @@ module Easyzpl
 
       label_data.push((printer_dpi / 5).to_s + ',0,' + 5.to_s + ',' + 8.to_s +
                       ',N^FN' + variable_fields_count.to_s + '^FS')
+    end
+
+    def variable_qr_code(x, y, params = {})
+      x = 0 unless numeric?(x)
+      y = 0 unless numeric?(y)
+      options = { size: 'medium' }.merge!(params)
+
+      # update the variable field count
+      self.variable_fields_count += 1
+
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s)
+
+      if params[:orientation] == :landscape
+        label_data.push('^BQB,')
+      else
+        label_data.push('^BQN,')
+      end
+
+      case options[:size]
+      when 'small'
+        label_data.push('1,5')
+      when 'medium'
+        label_data.push('2,10')
+      when 'large'
+        label_data.push('4,20')
+      end
+
+      label_data.push('^FN' + variable_fields_count.to_s + '^FS')
+    end
+
+    def variable_data_matrix(x, y, params = {})
+      x = 0 unless numeric?(x)
+      y = 0 unless numeric?(y)
+      options = { size: 'medium' }.merge!(params)
+
+      # update the variable field count
+      self.variable_fields_count += 1
+
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s)
+
+      if params[:orientation] == :landscape
+        label_data.push('^BXB,')
+      else
+        label_data.push('^BXN,')
+      end
+
+      case options[:size]
+      when 'small'
+        label_data.push('10,200')
+      when 'medium'
+        label_data.push('20,400')
+      when 'large'
+        label_data.push('40,800')
+      end
+
+      label_data.push('^FN' + variable_fields_count.to_s + '^FS')
     end
   end
 end

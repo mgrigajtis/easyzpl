@@ -86,9 +86,9 @@ module Easyzpl
                       printer_dpi).to_s)
 
       if params[:orientation] == :landscape
-        label_data.push('^AFB,')
+        label_data.push('^A0N,')
       else
-        label_data.push('^AFN,')
+        label_data.push('^A0B,')
       end
 
       label_data.push(Integer(options[:height] * printer_dpi).to_s + ',' +

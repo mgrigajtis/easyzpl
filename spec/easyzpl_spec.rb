@@ -15,7 +15,7 @@ describe 'Testing easyzpl Gem' do
       label.draw_border(0, 0, 400, 300)
       label.text_field('ZEBRA', 10, 10)
       label.bar_code_39('ZEBRA', 10, 30)
-      expect(label.to_s).to eq('^XA^LH30,30^FO0,0^GB81200,60900,1^FS^FO2030,2030^AFN,20,20^FDZEBRA^FS^FO2030,6090^B3N,Y,20,N,N^FDZEBRA^FS^PQ1^XZ')
+      expect(label.to_s).to eq('^XA^LH30,30^FO0,0^GB81200,60900,1^FS^FO2030,2030^A0B,20,20^FDZEBRA^FS^FO2030,6090^B3N,Y,20,N,N^FDZEBRA^FS^PQ1^XZ')
     end
   end
 
@@ -26,7 +26,7 @@ describe 'Testing easyzpl Gem' do
       label.draw_border(0, 0, 400, 300)
       label.variable_text_field(10, 10)
       label.variable_bar_code_39(10, 30)
-      expect(label.to_s).to eq('^XA^DFTemplate1^FS^LH30,30^FO0,0^GB81200,60900,1^FS^FO2030,2030^AFN,20,20^FN1^FS^FO2030,6090^BY2,2,100^B3N,Y,20,N,N^FN2^FS^PQ1^XZ')
+      expect(label.to_s).to eq('^XA^DFTemplate1^FS^LH30,30^FO0,0^GB81200,60900,1^FS^FO2030,2030^A0B,20,20^FN1^FS^FO2030,6090^BY2,2,100^B3N,Y,20,N,N^FN2^FS^PQ1^XZ')
     end
   end
 
