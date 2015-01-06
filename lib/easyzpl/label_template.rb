@@ -175,7 +175,7 @@ module Easyzpl
       label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
                       Integer(y * printer_dpi).to_s)
 
-      if params[:orientation] == :landscape
+      if params[:orientation] == :landscape || field_orientation == :landscape
         label_data.push('^BXB,')
       else
         label_data.push('^BXN,')
@@ -185,9 +185,9 @@ module Easyzpl
       when 'small'
         label_data.push('10,200')
       when 'medium'
-        label_data.push('20,400')
+        label_data.push('20,200')
       when 'large'
-        label_data.push('40,800')
+        label_data.push('40,200')
       end
 
       label_data.push('^FN' + variable_fields_count.to_s + '^FS')
