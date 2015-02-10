@@ -116,6 +116,20 @@ module Easyzpl
       #                  Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
     end
 
+    # Prints a bar code in barcode39 font
+    def bar_code_128(bar_code_string, x, y, params = {})
+      x = 0 unless numeric?(x)
+      y = 0 unless numeric?(y)
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s + '^BCN,20,N,N,Y,A^FD' +
+                      bar_code_string + '^FS')
+
+      # return unless label_height && label_width
+      # options = { height: 20 }.merge!(params) { |key, v1, v2| v1 }
+      # draw_bar_code128_(bar_code_string, Integer(x * pdf_dpi),
+      #                   Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
+    end
+
     # Prints a bar code in pdf417 font
     def bar_code_pdf417(bar_code_string, x, y, params = {})
       x = 0 unless numeric?(x)
