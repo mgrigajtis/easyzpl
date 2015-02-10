@@ -147,6 +147,34 @@ module Easyzpl
       #                   Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
     end
 
+    # Prints a bar code in barcode39 font
+    def bar_code_qr(bar_code_string, x, y, params = {})
+      x                = 0 unless numeric?(x)
+      y                = 0 unless numeric?(y)
+      magnification    = numeric?(params[:magnification]) ? params[:magnification] : default_qr_code_magnification
+      error_correction = { :ultra    => 'H',
+                           :high     => 'Q',
+                           :standard => 'M',
+                           :density  => 'L' }[params[:error_correction]] || (params[:error_correction]).nil? ? 'Q' : 'M'
+      mask             = numeric?(params[:mask]) ? params[:mask] : 7
+      model            = { 1          => 1,
+                           :standard  => 1,
+                           2          => 2,
+                           :enhanced  => 2 }[params[:model]] || 2
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s + '^BQN,' +
+                      Integer(model).to_s + ',' +
+                      Integer(magnification).to_s + ',' +
+                      error_correction + ',' +
+                      Integer(mask).to_s + '^FD' +
+                      bar_code_string + '^FS')
+
+      # return unless label_height && label_width
+      # options = { height: 20 }.merge!(params) { |key, v1, v2| v1 }
+      # draw_bar_code128_(bar_code_string, Integer(x * pdf_dpi),
+      #                   Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
+    end
+
     # Prints a bar code in pdf417 font
     def bar_code_pdf417(bar_code_string, x, y, params = {})
       x = 0 unless numeric?(x)
@@ -173,6 +201,19 @@ module Easyzpl
     end
 
     protected
+
+    def set_barcode_field_default
+    end
+
+    def default_qr_code_magnification
+      if self.printer_dpi < 100
+        1
+      elsif self.printer_dpi >= 1000
+        10
+      else
+        (self.printer_dpi / 100).floor
+      end
+    end
 
     def init_prawn(params)
       self.label_width = (params[:width] * pdf_dpi) || 0

@@ -20,4 +20,21 @@ describe 'Testing easyzpl Gem' do
     end
   end
 
+  context 'default_qr_code_magnification' do
+    let(:mapping) { { 0    => 1,
+                      80   => 1,
+                      100  => 1,
+                      150  => 1,
+                      200  => 2,
+                      300  => 3,
+                      600  => 6,
+                      1500 => 10 } }
+    it do
+      mapping.each do |key,value|
+        label = Easyzpl::Label.new(dots: key)
+        expect(label.send(:default_qr_code_magnification)).to eql(value)
+      end
+    end
+  end
+
 end
