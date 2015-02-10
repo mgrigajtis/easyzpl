@@ -16,6 +16,9 @@ module Easyzpl
     attr_accessor :printer_dpi
     attr_accessor :pdf_dpi
     attr_accessor :field_orientation
+    attr_accessor :barcode_default_module_width
+    attr_accessor :barcode_default_width_ratio
+    attr_accessor :barcode_default_height
 
     # Called when the new method is invoked
     def initialize(params = {})
@@ -34,6 +37,14 @@ module Easyzpl
 
       # See if invert is set to true
       self.invert = params[:invert]
+
+      # Set barcode defaults.
+      self.barcode_default_module_width = numeric?(params[:barcode_default_module_width]) ?
+                                          params[:barcode_default_module_width] : 2
+      self.barcode_default_width_ratio  = float?(params[:barcode_default_width_ratio]) ?
+                                          params[:barcode_default_width_ratio] : 3.0
+      self.barcode_default_height       = numeric?(params[:barcode_default_height]) ?
+                                          params[:barcode_default_height] : 10
 
       # The start of the label
       label_data.push('^XA')
@@ -189,6 +200,14 @@ module Easyzpl
       #                  Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
     end
 
+    # Some barcodes, such as QR codes may change document defaults.  These may be reset
+    # to the document defaults.
+    def reset_barcode_fields_to_default
+      label_data.push('^BY' + Integer(self.barcode_default_module_width).to_s + ',' +
+                      Float(self.barcode_default_width_ratio).to_s + ',' +
+                      Integer(self.barcode_default_height).to_s)
+    end
+
     # Renders the ZPL code as a string
     def to_s
       return '' unless label_data.length > 0
@@ -201,9 +220,6 @@ module Easyzpl
     end
 
     protected
-
-    def set_barcode_field_default
-    end
 
     def default_qr_code_magnification
       if self.printer_dpi < 100
@@ -226,6 +242,10 @@ module Easyzpl
     # Returns true if a variable is number, false if not
     def numeric?(variable)
       true if Integer(variable) rescue false
+    end
+
+    def float?(variable)
+      true if Float(variable) rescue false
     end
 
     # Draws the PDF rectangle (border)
