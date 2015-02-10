@@ -118,10 +118,27 @@ module Easyzpl
 
     # Prints a bar code in barcode39 font
     def bar_code_128(bar_code_string, x, y, params = {})
-      x = 0 unless numeric?(x)
-      y = 0 unless numeric?(y)
+      x                       = 0 unless numeric?(x)
+      y                       = 0 unless numeric?(y)
+      height                  = numeric?(params[:height]) ? params[:height] : 0.2
+      interpretation          = params[:interpretation] == :true ? 'Y' : 'N'
+      interpretation_location = params[:interpretation_location] == :above ? 'Y' : 'N'
+      check_digit             = params[:check_digit] == :true ? 'Y' : 'N'
+      mode                    = { :ucc_case => 'U',
+                                  :auto     => 'A',
+                                  :ucc_ean  => 'D' }[params[:mode]] || 'N'
+      orientation             = { :portrait => 'R',
+                                  90        => 'R',
+                                  180       => 'I',
+                                  270       => 'B' }[params[:orientation]] || 'N'
       label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
-                      Integer(y * printer_dpi).to_s + '^BCN,20,N,N,Y,A^FD' +
+                      Integer(y * printer_dpi).to_s + '^BC' +
+                      orientation + ',' +
+                      Integer(height* printer_dpi).to_s + ',' +
+                      interpretation + ',' +
+                      interpretation_location + ',' +
+                      check_digit + ',' +
+                      mode + '^FD' +
                       bar_code_string + '^FS')
 
       # return unless label_height && label_width
