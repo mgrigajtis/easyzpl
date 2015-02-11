@@ -9,6 +9,25 @@ describe 'Testing easyzpl Gem' do
     end
   end
 
+  context 'When creating an empty label with defaults set' do
+    it 'should output a blank label with defaults set' do
+      label = Easyzpl::Label.new(dots: 203)
+      label.reset_barcode_fields_to_default 
+      expect(label.to_s).to eq('^XA^BY2,3.0,10^PQ1^XZ')
+    end
+  end
+
+  context 'When creating an empty label with defaults set' do
+    it 'should output a blank label with defaults set' do
+      label = Easyzpl::Label.new(:dots                         => 203,
+                                 :barcode_default_module_width => 10,
+                                 :barcode_default_width_ratio  => 4.0,
+                                 :barcode_default_height       => 30)
+      label.reset_barcode_fields_to_default
+      expect(label.to_s).to eq('^XA^BY10,4.0,30^PQ1^XZ')
+    end
+  end
+
   context 'When creating a simple label' do
     it 'should output a label with the text "Zebra" and a barcode representation' do
       label = Easyzpl::Label.new(dots: 203)
