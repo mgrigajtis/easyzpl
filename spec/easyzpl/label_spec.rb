@@ -9,7 +9,7 @@ describe 'Testing easyzpl Gem' do
     end
   end
 
-  context 'When creating a simple lable' do
+  context 'When creating a simple label' do
     it 'should output a label with the text "Zebra" and a barcode representation' do
       label = Easyzpl::Label.new(dots: 203)
       label.home_position(30, 30)
