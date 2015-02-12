@@ -17,7 +17,7 @@ describe 'Testing easyzpl Gem' do
     end
   end
 
-  context 'When creating an empty label with defaults set' do
+  context 'When creating an empty label with all defaults set' do
     it 'should output a blank label with defaults set' do
       label = Easyzpl::Label.new(:dots                         => 203,
                                  :barcode_default_module_width => 10,
@@ -25,6 +25,33 @@ describe 'Testing easyzpl Gem' do
                                  :barcode_default_height       => 30)
       label.reset_barcode_fields_to_default
       expect(label.to_s).to eq('^XA^BY10,4.0,30^PQ1^XZ')
+    end
+  end
+
+  context 'When creating an empty label with barcode module width only set' do
+    it 'should output a blank label with defaults set' do
+      label = Easyzpl::Label.new(:dots                         => 203,
+                                 :barcode_default_module_width => 10)
+      label.reset_barcode_fields_to_default
+      expect(label.to_s).to eq('^XA^BY10,3.0,10^PQ1^XZ')
+    end
+  end
+
+  context 'When creating an empty label with barcode height only set' do
+    it 'should output a blank label with defaults set' do
+      label = Easyzpl::Label.new(:dots                         => 203,
+                                 :barcode_default_height       => 30)
+      label.reset_barcode_fields_to_default
+      expect(label.to_s).to eq('^XA^BY2,3.0,30^PQ1^XZ')
+    end
+  end
+
+  context 'When creating an empty label with barcode module width ratio only set' do
+    it 'should output a blank label with defaults set' do
+      label = Easyzpl::Label.new(:dots                         => 203,
+                                 :barcode_default_width_ratio  => 4.0)
+      label.reset_barcode_fields_to_default
+      expect(label.to_s).to eq('^XA^BY2,4.0,10^PQ1^XZ')
     end
   end
 
