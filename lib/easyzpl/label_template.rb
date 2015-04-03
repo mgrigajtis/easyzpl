@@ -97,7 +97,7 @@ module Easyzpl
         label_data.push('^B3N,')
       end
 
-      label_data.push('Y,' + Integer(options[:height] * printer_dpi).to_s +
+      label_data.push('N,' + Integer(options[:height] * printer_dpi).to_s +
                       ',N,N^FN' + variable_fields_count.to_s + '^FS')
 
       # return unless label_height && label_width

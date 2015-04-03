@@ -107,7 +107,7 @@ module Easyzpl
       x = 0 unless numeric?(x)
       y = 0 unless numeric?(y)
       label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
-                      Integer(y * printer_dpi).to_s + '^B3N,Y,20,N,N^FD' +
+                      Integer(y * printer_dpi).to_s + '^B3N,N,20,N,N^FD' +
                       bar_code_string + '^FS')
 
       # return unless label_height && label_width
