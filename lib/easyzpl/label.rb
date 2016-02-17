@@ -177,7 +177,7 @@ module Easyzpl
                       Integer(model).to_s + ',' +
                       Integer(magnification).to_s + ',' +
                       error_correction + ',' +
-                      Integer(mask).to_s + '^FD' +
+                      Integer(mask).to_s + '^FD' + error_correction + 'A,' +
                       bar_code_string + '^FS')
 
       # return unless label_height && label_width
