@@ -16,6 +16,9 @@ module Easyzpl
     attr_accessor :printer_dpi
     attr_accessor :pdf_dpi
     attr_accessor :field_orientation
+    attr_accessor :barcode_default_module_width
+    attr_accessor :barcode_default_width_ratio
+    attr_accessor :barcode_default_height
 
     # Called when the new method is invoked
     def initialize(params = {})
@@ -34,6 +37,14 @@ module Easyzpl
 
       # See if invert is set to true
       self.invert = params[:invert]
+
+      # Set barcode defaults.
+      self.barcode_default_module_width = numeric?(params[:barcode_default_module_width]) ?
+                                          params[:barcode_default_module_width] : 2
+      self.barcode_default_width_ratio  = float?(params[:barcode_default_width_ratio]) ?
+                                          params[:barcode_default_width_ratio] : 3.0
+      self.barcode_default_height       = numeric?(params[:barcode_default_height]) ?
+                                          params[:barcode_default_height] : 10
 
       # The start of the label
       label_data.push('^XA')
@@ -116,6 +127,65 @@ module Easyzpl
       #                  Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
     end
 
+    # Prints a bar code in barcode39 font
+    def bar_code_128(bar_code_string, x, y, params = {})
+      x                       = 0 unless numeric?(x)
+      y                       = 0 unless numeric?(y)
+      height                  = numeric?(params[:height]) ? params[:height] : 0.2
+      interpretation          = params[:interpretation] == :true ? 'Y' : 'N'
+      interpretation_location = params[:interpretation_location] == :above ? 'Y' : 'N'
+      check_digit             = params[:check_digit] == :true ? 'Y' : 'N'
+      mode                    = { :ucc_case => 'U',
+                                  :auto     => 'A',
+                                  :ucc_ean  => 'D' }[params[:mode]] || 'N'
+      orientation             = { :portrait => 'R',
+                                  90        => 'R',
+                                  180       => 'I',
+                                  270       => 'B' }[params[:orientation]] || 'N'
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s + '^BC' +
+                      orientation + ',' +
+                      Integer(height* printer_dpi).to_s + ',' +
+                      interpretation + ',' +
+                      interpretation_location + ',' +
+                      check_digit + ',' +
+                      mode + '^FD' +
+                      bar_code_string + '^FS')
+
+      # return unless label_height && label_width
+      # options = { height: 20 }.merge!(params) { |key, v1, v2| v1 }
+      # draw_bar_code128_(bar_code_string, Integer(x * pdf_dpi),
+      #                   Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
+    end
+
+    # Prints a bar code in barcode39 font
+    def bar_code_qr(bar_code_string, x, y, params = {})
+      x                = 0 unless numeric?(x)
+      y                = 0 unless numeric?(y)
+      magnification    = numeric?(params[:magnification]) ? params[:magnification] : default_qr_code_magnification
+      error_correction = { :ultra    => 'H',
+                           :high     => 'Q',
+                           :standard => 'M',
+                           :density  => 'L' }[params[:error_correction]] || (params[:error_correction]).nil? ? 'Q' : 'M'
+      mask             = numeric?(params[:mask]) ? params[:mask] : 7
+      model            = { 1          => 1,
+                           :standard  => 1,
+                           2          => 2,
+                           :enhanced  => 2 }[params[:model]] || 2
+      label_data.push('^FO' + Integer(x * printer_dpi).to_s + ',' +
+                      Integer(y * printer_dpi).to_s + '^BQN,' +
+                      Integer(model).to_s + ',' +
+                      Integer(magnification).to_s + ',' +
+                      error_correction + ',' +
+                      Integer(mask).to_s + '^FD' + error_correction + 'A,' +
+                      bar_code_string + '^FS')
+
+      # return unless label_height && label_width
+      # options = { height: 20 }.merge!(params) { |key, v1, v2| v1 }
+      # draw_bar_code128_(bar_code_string, Integer(x * pdf_dpi),
+      #                   Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
+    end
+
     # Prints a bar code in pdf417 font
     def bar_code_pdf417(bar_code_string, x, y, params = {})
       x = 0 unless numeric?(x)
@@ -128,6 +198,14 @@ module Easyzpl
       # options = { height: 20 }.merge!(params)
       # draw_bar_code_39(bar_code_string, Integer(x * pdf_dpi),
       #                  Integer(y * pdf_dpi), (options[:height] * pdf_dpi))
+    end
+
+    # Some barcodes, such as QR codes may change document defaults.  These may be reset
+    # to the document defaults.
+    def reset_barcode_fields_to_default
+      label_data.push('^BY' + Integer(self.barcode_default_module_width).to_s + ',' +
+                      Float(self.barcode_default_width_ratio).to_s + ',' +
+                      Integer(self.barcode_default_height).to_s)
     end
 
     # Renders the ZPL code as a string
@@ -143,6 +221,16 @@ module Easyzpl
 
     protected
 
+    def default_qr_code_magnification
+      if self.printer_dpi < 100
+        1
+      elsif self.printer_dpi >= 1000
+        10
+      else
+        (self.printer_dpi / 100).floor
+      end
+    end
+
     def init_prawn(params)
       self.label_width = (params[:width] * pdf_dpi) || 0
       self.label_height = (params[:height] * pdf_dpi) || 0
@@ -154,6 +242,10 @@ module Easyzpl
     # Returns true if a variable is number, false if not
     def numeric?(variable)
       true if Integer(variable) rescue false
+    end
+
+    def float?(variable)
+      true if Float(variable) rescue false
     end
 
     # Draws the PDF rectangle (border)
