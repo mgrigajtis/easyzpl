@@ -1,5 +1,5 @@
 # Easyzpl
-[![Build Status](https://travis-ci.org/crossroads/easyzpl.svg?branch=master)](https://travis-ci.org/crossroads/easyzpl)
+[![Build Status](https://travis-ci.org/mgrigajtis/easyzpl.svg?branch=master)](https://travis-ci.org/mgrigajtis/easyzpl)
 
 Makes it easy to write ZPL & ZPL2.  This Gem translates your Ruby Code
 into ZPL.  You can then send your ZPL to your printers.  In the future,
